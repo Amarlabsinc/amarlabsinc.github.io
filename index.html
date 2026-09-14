@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amar Labs Inc.</title>
+<meta name="description" content="Amar Labs Inc. is a software company in British Columbia, Canada that designs and builds apps for iPhone.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B2A24'/%3E%3Ctext x='32' y='45' font-family='Arial,Helvetica,sans-serif' font-size='38' font-weight='800' fill='%23F2F4F1' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Amar Labs Inc.","legalName":"Amar Labs Inc.","url":"https://amarlabsinc.github.io/","foundingDate":"2026-08-13","address":{"@type":"PostalAddress","addressRegion":"BC","addressCountry":"CA"},"email":"amarlabsinc@gmail.com"}
+</script>
+<style>
+  :root {
+    --ground: #F2F4F1;
+    --ink: #1B2A24;
+    --muted: #5E6B64;
+    --rule: #D3DAD5;
+    --accent: #2F6B55;
+    --measure: 38rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #111916;
+      --ink: #E6ECE8;
+      --muted: #9AA8A1;
+      --rule: #2A3530;
+      --accent: #86C9AB;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-optical-sizing: auto;
+    font-size: 1.125rem;
+    line-height: 1.55;
+    padding-inline: clamp(1.25rem, 6vw, 5rem);
+    padding-block: clamp(2.5rem, 9vh, 6rem) 2.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main { flex: 1; }
+  .wordmark {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(3.75rem, 17vw, 11rem);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    font-variation-settings: "opsz" 96;
+  }
+  .wordmark span { display: block; }
+  .statement {
+    max-width: var(--measure);
+    margin: clamp(2rem, 6vh, 3.5rem) 0 0;
+    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .facts {
+    max-width: var(--measure);
+    margin: clamp(2.5rem, 7vh, 4rem) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 0.25rem 1.5rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; }
+  a {
+    color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  footer {
+    margin-top: 4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  @media (max-width: 30rem) {
+    .facts div { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1 class="wordmark"><span>Amar</span><span>Labs</span></h1>
+
+  <p class="statement">Amar Labs Inc. is a software company in British Columbia, Canada. We design and build apps for iPhone.</p>
+
+  <dl class="facts">
+    <div><dt>Legal name</dt><dd>Amar Labs Inc.</dd></div>
+    <div><dt>Incorporated</dt><dd>August 13, 2026, under the British Columbia Business Corporations Act</dd></div>
+    <div><dt>Contact</dt><dd><a href="mailto:amarlabsinc@gmail.com">amarlabsinc@gmail.com</a></dd></div>
+  </dl>
+</main>
+<footer>© 2026 Amar Labs Inc.</footer>
+</body>
+</html>
