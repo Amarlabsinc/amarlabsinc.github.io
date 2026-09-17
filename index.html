@@ -84,7 +84,7 @@
     text-wrap: balance;
   }
 
-  /* ---- section rules draw themselves ---- */
+  /* ---- section rules draw themselves as you reach them ---- */
   .work, .contact { position: relative; }
   .work::before, .contact::before {
     content: "";
@@ -98,133 +98,28 @@
 
   .work { padding-block: clamp(3.5rem, 11vh, 6rem); }
 
-  /* ---- the instrument plate ---- */
-  .mark { margin: 0; }
-  .plate {
-    position: relative;
-    view-timeline-name: --mark;
-    view-timeline-axis: block;
-    max-width: 32rem;
-    margin-inline: auto;
-    padding: clamp(1.75rem, 5vw, 3rem);
+  /* ---- the app ---- */
+  .app {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1.75rem, 4vw, 3.25rem);
   }
-  /* The plotter bed. It carries the mask so the corner brackets stay crisp. */
-  .plate::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(to right, rgba(122,162,255,.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(122,162,255,.06) 1px, transparent 1px);
-    background-size: 26px 26px;
-    background-position: center;
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 48%, transparent 82%);
-    mask-image: radial-gradient(ellipse at center, #000 48%, transparent 82%);
-    pointer-events: none;
-  }
-  .corner {
-    position: absolute;
-    width: 13px; height: 13px;
-    border: 1px solid rgba(122,162,255,.55);
-    opacity: 1;
-  }
-  .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
-  .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
-  .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
-  .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
-  @keyframes bracket { from { opacity: 0; transform: scale(.55); } to { opacity: 1; transform: scale(1); } }
-
-  /* one thin pass of the head, tied to the draw */
-  .scan {
-    position: absolute;
-    left: 6%; right: 6%;
-    top: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(122,162,255,.85), transparent);
-    opacity: 0;
-    pointer-events: none;
-  }
-  @keyframes sweepline {
-    0%   { opacity: 0; top: 8%; }
-    12%  { opacity: .9; }
-    88%  { opacity: .9; }
-    100% { opacity: 0; top: 92%; }
-  }
-
-  .onkar {
-    display: block;
-    width: 100%;
-    max-width: 23rem;
-    margin-inline: auto;
+  .appicon {
+    flex: none;
+    width: clamp(6rem, 11vw, 8.5rem);
     height: auto;
-    overflow: visible;
+    aspect-ratio: 1;
+    border-radius: 22.5%;      /* the iOS squircle, near enough */
+    /* the icon is white-on-black, so it needs an edge to sit on a black page */
+    box-shadow: 0 0 0 1px rgba(255,255,255,.11), 0 22px 60px -24px rgba(122,162,255,.55);
   }
-  .ink {
-    fill: none;
-    stroke: var(--ink);
-    stroke-width: 37.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: drop-shadow(0 0 5px rgba(140,180,255,.55));
-  }
-  /* pathLength="1" makes the dash maths exact for every stroke */
-  .ink path { stroke-dasharray: 1; stroke-dashoffset: 1; }
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-
-  /* Fallback: a timed one-shot when the mark scrolls into view. */
-  .is-writing .s1 { animation: draw 0.90s linear 0s    both; }
-  .is-writing .s2 { animation: draw 0.45s linear 1.02s both; }
-  .is-writing .s3 { animation: draw 0.41s linear 1.59s both; }
-  .is-writing .s4 { animation: draw 1.64s linear 2.12s both; }
-  .is-writing .scan { animation: sweepline 3.8s linear both; }
-  .is-writing .corner { animation: bracket .5s cubic-bezier(.2,.8,.3,1) both; }
-  .is-written .ink path { stroke-dashoffset: 0; }
-  .is-locked .ink path { animation: none !important; stroke-dashoffset: 0 !important; }
-  .is-locked .scan { animation: none !important; opacity: 0 !important; }
-  .is-locked .corner { animation: none !important; opacity: 1 !important; transform: none !important; }
-
-  /* Preferred: the pen is driven by the scroll itself. Strokes run in his
-     order, each range proportional to that stroke's true length. */
-  @supports (animation-timeline: view()) {
-    /* SVG <path> elements generate no CSS layout box, so view() attached to them
-       yields an inactive timeline (timeline.currentTime === null) and nothing draws.
-       The timeline is declared on .plate and referenced by name from inside. */
-    .plate .s1, .plate .s2, .plate .s3, .plate .s4,
-    .plate .scan, .plate .corner {
-      animation-timeline: --mark;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-    }
-    .work::before, .contact::before {
-      animation-timeline: view();
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-    }
-    /* Ranges sit inside the ENTRY phase, so the mark is guaranteed finished the
-       moment it is fully on screen — it can never rest half-drawn. Each span is
-       proportional to that stroke's true length. */
-    .plate .s1 { animation-name: draw; animation-range: entry 10% entry 31%; }
-    .plate .s2 { animation-name: draw; animation-range: entry 33% entry 43%; }
-    .plate .s3 { animation-name: draw; animation-range: entry 45% entry 55%; }
-    .plate .s4 { animation-name: draw; animation-range: entry 57% entry 95%; }
-    .plate .scan { animation-name: sweepline; animation-range: entry 8% entry 97%; }
-    .plate .corner { animation-name: bracket; animation-range: entry 0% entry 14%; }
-    /* .work is taller than the viewport, so entry never completes there — use cover. */
-    .work::before, .contact::before { animation-name: rule; animation-range: cover 0% cover 12%; }
+  /* it wakes like a screen coming on, rather than sliding in */
+  @keyframes wake {
+    from { opacity: .22; filter: brightness(.3) contrast(1.15); box-shadow: 0 0 0 1px rgba(255,255,255,.05), 0 0 0 0 rgba(122,162,255,0); }
+    to   { opacity: 1; filter: none; box-shadow: 0 0 0 1px rgba(255,255,255,.11), 0 22px 60px -24px rgba(122,162,255,.55); }
   }
 
-  .caption {
-    max-width: 28rem;
-    margin: clamp(1.75rem, 4vh, 2.5rem) auto 0;
-    text-align: center;
-    font-size: 0.9375rem;
-    line-height: 1.55;
-    color: var(--dim);
-    text-wrap: balance;
-  }
-
-  /* ---- hukam ---- */
-  .about { margin-top: clamp(4rem, 12vh, 7rem); }
+  .about { min-width: 0; }
   .about h2 {
     margin: 0;
     font-size: clamp(1.9rem, 4.6vw, 3rem);
@@ -234,18 +129,38 @@
   }
   .about p { max-width: var(--measure); margin: 1.25rem 0 0; color: var(--dim); }
   .about p.free { color: var(--ink); }
-  .store {
+
+  /* Apple's official badge, used unaltered. */
+  .badge {
     display: inline-block;
-    margin-top: 2.25rem;
-    padding: 0.85rem 1.6rem;
-    border: 1px solid #2B313B;
-    border-radius: 999px;
-    color: var(--ink);
-    text-decoration: none;
-    font-variation-settings: "wdth" 100, "wght" 500;
-    transition: border-color .25s, background-color .25s, color .25s;
+    margin-top: 2rem;
+    line-height: 0;
+    border-radius: 8px;
+    transition: opacity .25s;
   }
-  .store:hover { border-color: #fff; background: #fff; color: #000; }
+  .badge:hover { opacity: .78; }
+  .badge img { height: 3rem; width: auto; display: block; }
+  .badge:focus-visible { outline: 2px solid var(--glow); outline-offset: 5px; }
+
+  @media (max-width: 40rem) {
+    .app { flex-direction: column; gap: 1.75rem; }
+    .appicon { width: 5.5rem; }
+  }
+
+  /* Scroll drives the reveals. ::before and <img> both generate real boxes,
+     so view() resolves against them — unlike an SVG <path>, which does not. */
+  @supports (animation-timeline: view()) {
+    .work::before, .contact::before {
+      animation: rule linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 12%;
+    }
+    .appicon {
+      animation: wake linear both;
+      animation-timeline: view();
+      animation-range: entry 12% entry 88%;
+    }
+  }
 
   /* ---- foot ---- */
   .contact { padding-block: clamp(3rem, 9vh, 4.5rem); }
@@ -257,13 +172,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .wordmark { animation: none; background-position: 0 0; }
-    .ink path { stroke-dashoffset: 0; }
-    .scan { display: none; }
-    .work::before, .contact::before { transform: scaleX(1); }
-    .plate .s1, .plate .s2, .plate .s3, .plate .s4,
-    .plate .scan, .plate .corner, .work::before, .contact::before,
-    .is-writing .s1, .is-writing .s2, .is-writing .s3, .is-writing .s4,
-    .is-writing .scan, .is-writing .corner { animation: none; }
+    .work::before, .contact::before { transform: scaleX(1); animation: none; }
+    .appicon { animation: none; opacity: 1; filter: none; }
     * { transition: none !important; }
   }
 </style>
@@ -279,28 +189,16 @@
 
   <main>
     <section class="work">
-      <figure class="mark">
-        <div class="plate">
-          <i class="corner tl" aria-hidden="true"></i><i class="corner tr" aria-hidden="true"></i>
-          <i class="corner bl" aria-hidden="true"></i><i class="corner br" aria-hidden="true"></i>
-          <span class="scan" aria-hidden="true"></span>
-          <svg class="onkar" viewBox="117 239 789 524" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Ik Onkar, drawn one stroke at a time.">
-            <g class="ink">
-              <path class="s1" pathLength="1" d="M293.5,535.6 L293.4,529.8 L293.5,524.0 L293.5,518.1 L293.5,512.3 L293.3,506.4 L292.8,500.6 L292.5,494.7 L292.4,488.9 L291.9,483.0 L291.2,477.2 L290.4,471.4 L289.4,465.7 L287.8,460.0 L285.7,454.6 L283.2,449.3 L280.0,444.3 L276.4,439.8 L272.3,435.6 L267.8,431.8 L262.9,428.6 L257.6,426.0 L252.2,423.9 L246.6,422.0 L240.9,420.6 L235.2,419.8 L229.3,419.1 L223.5,418.6 L217.7,418.5 L211.8,418.8 L206.0,419.4 L200.2,420.1 L194.4,420.9 L188.7,422.3 L183.2,424.2 L177.7,426.3 L172.6,429.2 L167.8,432.6 L163.4,436.4 L159.4,440.7 L155.8,445.3 L152.8,450.3 L150.3,455.6 L148.2,461.1 L146.8,466.8 L145.8,472.6 L145.0,478.3 L144.3,484.2 L144.4,490.0 L145.2,495.8 L146.0,501.6 L147.1,507.3 L148.8,513.0 L151.1,518.3 L153.9,523.5 L157.2,528.3 L161.1,532.6 L165.5,536.5 L170.3,539.8 L175.5,542.6 L180.8,545.0 L186.4,546.9 L192.0,548.3 L197.8,549.2 L203.6,549.9 L209.5,550.3 L215.3,550.3 L221.2,550.1 L227.0,549.5 L232.8,548.5 L238.6,547.5 L244.3,546.2 L249.9,544.5 L255.4,542.7 L261.2,541.4 L266.9,540.4 L272.7,539.2 L278.4,538.0 L284.1,536.6 L289.8,535.6 L293.4,539.6 L293.5,545.4 L293.5,551.3 L293.5,557.1 L293.5,563.0 L293.5,568.9 L293.5,574.7 L293.5,580.6 L293.5,586.4 L293.5,592.3 L293.5,598.2 L293.5,604.0 L293.1,609.9 L292.6,615.7 L292.5,621.5 L292.5,627.4 L292.5,633.3 L292.9,639.1 L293.4,644.9 L293.8,650.8 L294.3,656.6 L295.0,662.4 L296.0,668.2 L297.2,673.9 L298.7,679.6 L300.7,685.1 L303.1,690.5 L305.9,695.6 L309.3,700.4 L313.1,704.7 L317.4,708.8 L321.8,712.6 L326.7,715.8 L331.9,718.6 L337.3,720.8 L343.0,722.1 L348.8,722.7 L354.7,722.5 L360.5,722.2 L366.3,721.7 L372.1,720.8 L377.9,719.7 L381.3,719.2 L386.2,718.5"/>
-              <path class="s2" pathLength="1" d="M350.1,421.4 L367.7,421.4 L373.5,421.4 L379.4,421.4 L385.3,421.4 L391.1,421.4 L397.0,421.4 L402.8,422.0 L408.5,421.3 L414.2,419.7 L419.9,420.7 L425.7,421.4 L431.5,421.4 L437.4,421.4 L443.2,421.4 L449.1,421.4 L455.0,421.4 L460.8,421.4 L466.7,421.4 L472.5,421.4 L478.4,421.4 L484.3,421.4 L490.1,421.4 L496.0,421.4 L501.8,421.4 L507.7,421.4 L513.6,421.4 L519.4,421.4 L525.3,421.4 L531.1,421.4 L537.0,421.4 L542.9,421.4 L548.7,421.4 L554.6,421.4 L560.4,421.4 L566.3,421.4 L572.2,421.4 L578.0,421.4 L583.9,421.4 L589.7,421.4 L595.6,421.4 L601.5,421.4 L607.3,421.4 L613.2,421.4 L619.0,421.4 L624.9,421.4 L630.7,421.4 L636.6,421.4 L642.5,421.4 L648.3,421.4 L654.2,421.4 L660.0,421.4 L665.9,421.4 L671.8,421.4 L677.6,421.4 L680.2,421.4 L704.6,421.4"/>
-              <path class="s3" pathLength="1" d="M647.0,421.4 L647.0,427.2 L647.0,433.1 L647.0,439.0 L647.0,444.8 L646.5,450.7 L645.7,456.5 L645.0,462.3 L644.1,468.1 L642.9,473.8 L641.3,479.4 L639.5,485.0 L637.5,490.5 L635.2,495.9 L632.7,501.2 L629.9,506.3 L626.7,511.2 L623.3,516.0 L619.6,520.6 L615.7,524.9 L611.6,529.1 L607.3,533.0 L602.7,536.8 L597.9,540.1 L592.9,543.2 L587.8,545.9 L582.5,548.4 L577.7,551.8 L573.8,556.1 L571.7,561.5 L566.1,560.1 L560.2,560.1 L554.4,560.1 L548.5,560.1 L542.6,560.1 L536.8,560.1 L530.9,560.1 L525.1,560.1 L519.2,560.1 L513.3,560.1 L507.5,560.1 L501.6,560.1 L495.8,560.1 L489.9,560.1 L484.1,560.1 L478.2,560.1 L472.3,560.1 L466.5,560.1 L460.6,560.1 L454.8,560.1 L448.9,560.1 L443.0,560.1 L437.2,560.1 L431.3,560.1 L425.5,560.1 L419.6,560.1 L413.7,560.1 L412.6,560.1"/>
-              <path class="s4" pathLength="1" d="M573.7,564.0 L577.2,568.7 L580.8,573.3 L585.2,577.1 L590.3,579.9 L595.4,582.8 L600.4,586.0 L605.1,589.4 L609.6,593.2 L613.8,597.2 L617.8,601.6 L621.4,606.2 L624.7,611.0 L627.6,616.1 L630.0,621.5 L632.1,626.9 L633.7,632.5 L634.7,638.3 L635.7,644.1 L636.5,649.9 L637.0,655.7 L637.2,661.6 L637.0,667.4 L636.4,673.2 L635.3,679.0 L633.7,684.6 L631.7,690.1 L629.1,695.3 L626.0,700.3 L622.7,705.2 L619.0,709.7 L614.9,713.9 L610.4,717.7 L605.6,721.0 L600.7,724.2 L595.6,727.0 L590.2,729.4 L584.7,731.2 L579.0,732.9 L573.3,734.1 L567.5,735.0 L561.7,735.8 L555.9,736.3 L550.0,736.3 L544.2,735.8 L538.4,735.4 L532.6,734.6 L526.8,733.5 L521.1,732.3 L515.4,731.0 L509.8,729.1 L504.4,727.0 L499.0,724.5 L494.0,721.6 L489.0,718.6 L484.1,715.3 L479.4,711.8 L474.9,708.1 L470.6,704.0 L466.5,699.9 L462.4,695.8 L458.3,691.5 L454.5,687.0 L451.1,682.3 L447.8,677.5 L444.7,672.5 L441.8,667.4 L439.0,662.2 L436.4,657.0 L433.8,651.8 L431.2,646.5 L428.7,641.2 L426.5,635.8 L424.6,630.2 L422.8,624.7 L420.9,619.1 L419.2,613.5 L417.8,607.8 L416.5,602.1 L415.5,596.4 L414.8,590.6 L414.0,584.8 L413.2,578.9 L412.7,573.1 L412.1,567.3 L411.2,561.5 L408.9,556.2 L407.4,550.5 L406.7,544.7 L406.1,538.9 L405.7,533.0 L405.2,527.2 L404.8,521.4 L404.8,515.5 L404.3,509.7 L403.8,503.8 L403.8,498.0 L403.8,492.1 L403.8,486.3 L403.8,480.4 L404.3,474.6 L404.8,468.7 L404.8,462.9 L404.8,457.0 L405.2,451.2 L405.7,445.3 L405.8,439.5 L405.8,433.6 L406.2,427.8 L407.9,422.4 L412.4,418.6 L415.1,413.5 L416.0,407.7 L416.9,401.9 L417.6,396.1 L418.4,390.3 L419.6,384.6 L421.4,379.0 L423.4,373.5 L425.5,368.0 L428.0,362.7 L430.6,357.5 L433.3,352.3 L436.1,347.2 L439.1,342.1 L442.2,337.2 L445.7,332.4 L449.3,327.8 L452.9,323.2 L456.8,318.8 L460.8,314.6 L465.2,310.6 L469.7,306.9 L474.3,303.3 L479.1,300.0 L484.1,296.9 L489.2,294.0 L494.4,291.4 L499.9,289.2 L505.5,287.5 L511.1,285.8 L516.8,284.6 L522.6,284.0 L528.4,283.2 L534.3,282.7 L540.1,282.7 L546.0,282.9 L551.8,283.5 L557.6,284.3 L563.4,285.3 L569.1,286.4 L574.8,288.0 L580.3,289.9 L585.7,292.2 L590.8,295.0 L595.8,298.0 L600.7,301.3 L605.3,305.0 L609.6,308.9 L613.8,313.0 L617.9,317.2 L621.8,321.5 L625.6,326.0 L630.0,329.8 L635.3,332.3 L640.4,335.2 L642.4,340.5 L642.0,346.3 L642.3,342.7 L641.6,337.0 L642.4,334.6 L648.1,334.0 L653.2,331.1 L657.7,327.3 L662.1,323.5 L666.7,319.8 L671.4,316.4 L676.1,312.8 L680.8,309.3 L685.5,305.8 L690.3,302.5 L695.2,299.2 L700.0,295.9 L704.9,292.7 L709.9,289.7 L715.1,287.0 L720.3,284.4 L725.6,281.7 L730.9,279.3 L736.2,276.9 L741.7,274.8 L747.3,273.2 L752.9,271.5 L758.6,270.0 L764.3,268.8 L770.1,267.9 L775.9,267.0 L781.7,266.3 L787.6,266.2 L793.4,266.7 L799.2,267.5 L805.0,268.4 L810.7,269.7 L816.2,271.6 L821.7,273.6 L827.0,276.1 L832.2,278.7 L837.3,281.6 L842.1,285.0 L846.5,288.9 L850.5,293.1 L854.3,297.6 L857.7,302.4 L860.8,307.4 L863.7,312.5 L866.3,317.7 L868.7,323.1 L871.0,328.4 L873.3,333.8 L875.2,339.4 L876.7,345.0 L877.9,350.7 L878.7,356.5 L879.3,362.4 L879.4,363.8 L879.4,363.8"/>
-            </g>
-          </svg>
+      <div class="app">
+        <img class="appicon" src="hukam-icon.png" width="1024" height="1024" alt="Hukam app icon" decoding="async">
+        <div class="about">
+          <h2>Hukam</h2>
+          <p>The daily Hukamnama from Sri Harmandir Sahib &mdash; read whole in the app, carried line by line on your Home Screen and Lock Screen through the day, with a feed of Gurbani lines to sit with.</p>
+          <p class="free">Every word of Gurbani in Hukam is free, and always will be.</p>
+          <a class="badge" href="https://apps.apple.com/app/id6797734573">
+            <img src="appstore-badge.svg" width="144" height="48" alt="Download on the App Store">
+          </a>
         </div>
-        <figcaption class="caption">Hukam writes this at every launch, one stroke at a time, in the order it is written by hand. Scroll to drive the pen.</figcaption>
-      </figure>
-
-      <div class="about">
-        <h2>Hukam</h2>
-        <p>The daily Hukamnama from Sri Harmandir Sahib &mdash; read whole in the app, carried line by line on your Home Screen and Lock Screen through the day, with a feed of Gurbani lines to sit with.</p>
-        <p class="free">Every word of Gurbani in Hukam is free, and always will be.</p>
-        <a class="store" href="https://apps.apple.com/app/id6797734573">Read on the App Store</a>
       </div>
     </section>
 
@@ -311,41 +209,5 @@
 
   <footer>&copy; 2026 Amar Labs Inc.</footer>
 </div>
-
-<script>
-(function () {
-  var fig = document.querySelector('.mark');
-  var svg = document.querySelector('.onkar');
-  if (!fig || !svg) return;
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { fig.classList.add('is-written'); return; }
-
-  // Scroll-driven CSS handles it natively where supported; don't double-drive it.
-  var plate = document.querySelector('.plate');
-  var scrollDriven = window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()');
-
-  if (scrollDriven) {
-    // The scroll drives the pen while the plate is entering. Once it is fully on
-    // screen, pin it finished so it can never be left resting mid-stroke.
-    if (!('IntersectionObserver' in window)) return;
-    var lock = new IntersectionObserver(function (es) {
-      for (var i = 0; i < es.length; i++) {
-        if (es[i].intersectionRatio >= 0.95) { fig.classList.add('is-locked'); lock.disconnect(); return; }
-      }
-    }, { threshold: [0.5, 0.95, 0.99, 1] });
-    lock.observe(plate);
-    return;
-  }
-
-  if (!('IntersectionObserver' in window)) { fig.classList.add('is-writing'); return; }
-  var io = new IntersectionObserver(function (entries) {
-    for (var i = 0; i < entries.length; i++) {
-      if (entries[i].isIntersecting) { fig.classList.add('is-writing'); io.disconnect(); return; }
-    }
-  }, { threshold: 0.3 });
-  io.observe(svg);
-})();
-</script>
-<noscript><style>.ink path { stroke-dashoffset: 0; }</style></noscript>
 </body>
 </html>
