@@ -101,7 +101,7 @@
   /* ---- the app ---- */
   .app {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: clamp(1.75rem, 4vw, 3.25rem);
   }
   .appicon {
@@ -127,13 +127,11 @@
     letter-spacing: -0.025em;
     line-height: 1;
   }
-  .about p { max-width: var(--measure); margin: 1.25rem 0 0; color: var(--dim); }
-  .about p.free { color: var(--ink); }
 
   /* Apple's official badge, used unaltered. */
   .badge {
     display: inline-block;
-    margin-top: 2rem;
+    margin-top: 1.4rem;
     line-height: 0;
     border-radius: 8px;
     transition: opacity .25s;
@@ -143,7 +141,7 @@
   .badge:focus-visible { outline: 2px solid var(--glow); outline-offset: 5px; }
 
   @media (max-width: 40rem) {
-    .app { flex-direction: column; gap: 1.75rem; }
+    .app { flex-direction: column; align-items: flex-start; gap: 1.75rem; }
     .appicon { width: 5.5rem; }
   }
 
@@ -193,8 +191,6 @@
         <img class="appicon" src="hukam-icon.png" width="1024" height="1024" alt="Hukam app icon" decoding="async">
         <div class="about">
           <h2>Hukam</h2>
-          <p>The daily Hukamnama from Sri Harmandir Sahib &mdash; read whole in the app, carried line by line on your Home Screen and Lock Screen through the day, with a feed of Gurbani lines to sit with.</p>
-          <p class="free">Every word of Gurbani in Hukam is free, and always will be.</p>
           <a class="badge" href="https://apps.apple.com/app/id6797734573">
             <img src="appstore-badge.svg" width="144" height="48" alt="Download on the App Store">
           </a>
