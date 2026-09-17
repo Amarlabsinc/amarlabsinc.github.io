@@ -102,6 +102,8 @@
   .mark { margin: 0; }
   .plate {
     position: relative;
+    view-timeline-name: --mark;
+    view-timeline-axis: block;
     max-width: 32rem;
     margin-inline: auto;
     padding: clamp(1.75rem, 5vw, 3rem);
@@ -184,8 +186,15 @@
   /* Preferred: the pen is driven by the scroll itself. Strokes run in his
      order, each range proportional to that stroke's true length. */
   @supports (animation-timeline: view()) {
+    /* SVG <path> elements generate no CSS layout box, so view() attached to them
+       yields an inactive timeline (timeline.currentTime === null) and nothing draws.
+       The timeline is declared on .plate and referenced by name from inside. */
     .plate .s1, .plate .s2, .plate .s3, .plate .s4,
-    .plate .scan, .plate .corner,
+    .plate .scan, .plate .corner {
+      animation-timeline: --mark;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
     .work::before, .contact::before {
       animation-timeline: view();
       animation-timing-function: linear;
@@ -321,9 +330,9 @@
     if (!('IntersectionObserver' in window)) return;
     var lock = new IntersectionObserver(function (es) {
       for (var i = 0; i < es.length; i++) {
-        if (es[i].intersectionRatio >= 0.985) { fig.classList.add('is-locked'); lock.disconnect(); return; }
+        if (es[i].intersectionRatio >= 0.95) { fig.classList.add('is-locked'); lock.disconnect(); return; }
       }
-    }, { threshold: [0.985, 1] });
+    }, { threshold: [0.5, 0.95, 0.99, 1] });
     lock.observe(plate);
     return;
   }
