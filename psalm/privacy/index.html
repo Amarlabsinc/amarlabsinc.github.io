@@ -33,7 +33,7 @@
     <h1>Psalm Privacy Policy</h1>
     <p class="lede">Psalm was built to know as little about you as possible. This policy explains
       what the app does, and mostly what it doesn't do, with your information.</p>
-    <p class="stamp">Effective 16 October 2026</p>
+    <p class="stamp">Effective 16 October 2026. Last updated 17 October 2026.</p>
   </header>
 
   <main id="main">
@@ -41,8 +41,10 @@
       <h2>The short version</h2>
       <div class="prose">
         <ul>
-          <li>No accounts, no ads, no advertising trackers, no profiling. Nothing about you is
-            ever sold or shared for marketing.</li>
+          <li>No ads, no advertising trackers, no profiling. Nothing about you is ever sold or
+            shared for marketing.</li>
+          <li>You can use everything in Psalm without an account. From version 1.1 you can
+            choose to sign in with Apple; what that stores is described below.</li>
           <li>The Bible and every day's readings are inside the app. Psalm does not fetch
             Scripture from the internet.</li>
           <li>Once a day, Psalm sends one anonymous request so we can count how many people use
@@ -86,6 +88,24 @@
     </section>
 
     <section class="band">
+      <h2>If you sign in</h2>
+      <div class="prose">
+        <p>Signing in is optional and adds nothing you need for daily use — it exists so future
+          features can keep your saved verses across devices. If you choose <strong>Sign in with
+          Apple</strong> (from version 1.1), we store:</p>
+        <ul>
+          <li>an opaque user identifier issued by Apple, and</li>
+          <li>the email address associated with it, which may be Apple's private relay address
+            if you chose to hide yours.</li>
+        </ul>
+        <p>That is the whole list. It is held by our authentication provider,
+          <strong>Supabase</strong>, in an account system used only by Psalm, and used only to
+          operate your account. You can delete your account inside the app — open Settings and
+          scroll to the bottom for Delete Account — and deletion removes it from our systems.</p>
+      </div>
+    </section>
+
+    <section class="band">
       <h2>Subscriptions</h2>
       <div class="prose">
         <p>Psalm Premium is billed by Apple through your Apple Account. We never see your payment
@@ -97,16 +117,21 @@
         <ul>
           <li>the purchase record Apple issued — which plan, when, whether it is still active,
             and the country of your Apple Account;</li>
-          <li>a random identifier for your installation of the app; and</li>
+          <li>a random identifier for your installation of the app;</li>
+          <li>if you are signed in, the same account identifier we use in our own database, so
+            that a subscription can be matched to an account when you write to us for help;
+            and</li>
           <li>from version 1.1, a few facts about how the app is set up, held against that random
-            identifier: how many Psalm widgets are on your Home Screen and Lock Screen, whether
+            identifier — or against your account identifier if you are signed in: how many Psalm widgets are on your Home Screen and Lock Screen, whether
             notifications are allowed, which typeface is chosen, the answers given on the welcome
             screens (including your church) and how far through them you went, and how often the
             Premium screen was opened, from where and for roughly how long, and which of its two
             designs you were shown. They tell us which parts of the app help and which get in the
             way.</li>
         </ul>
-        <p>RevenueCat is never given your name, your email address or your payment details.</p>
+        <p>RevenueCat is never given your name, your email address or your payment details. If
+          you sign out or delete your account, your installation goes back to reporting under a
+          random identifier only.</p>
         <p>None of this decides what you can read. Every word of Scripture in Psalm is free, and
           always will be.</p>
       </div>
